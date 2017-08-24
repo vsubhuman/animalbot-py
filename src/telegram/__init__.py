@@ -20,7 +20,7 @@ class Bot:
         return self.send('sendPhoto', {'chat_id': chat_id, 'photo': photo, 'caption': text})
 
     def send_video(self, chat_id, video, text=None):
-        return self.send('sendPhoto', {'chat_id': chat_id, 'video': video, 'caption': text})
+        return self.send('sendVideo', {'chat_id': chat_id, 'video': video, 'caption': text})
 
     def leave_chat(self, chat_id):
         return self.send('leaveChat', {'chat_id': chat_id})
