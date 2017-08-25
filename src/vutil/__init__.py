@@ -28,3 +28,7 @@ def split(str):
 
 def join(seq, sep=' '):
     return sep.join(str(x) for x in seq) if seq else ''
+
+
+def head(seq):
+    return next(iter(seq or []), None)

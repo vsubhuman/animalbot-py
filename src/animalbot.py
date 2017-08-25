@@ -3,6 +3,7 @@ import os
 import random
 
 import cates
+import doggos
 import telegram
 from vutil import *
 
@@ -36,6 +37,7 @@ def handle_message(msg):
         '/why': lambda: send_why(chat_id, join(words[1:])),
         '/animal': lambda: send_animal_help(chat_id),
         '/cate': lambda: send_cate(chat_id, fname),
+        '/doggo': lambda: send_doggo(chat_id, fname),
         '/start': lambda: send_hello(chat_id, fname),
         '/version': lambda: bot.send_message(chat_id, "Version: %s" % version),
         DEFAULT: lambda: send_help(chat_id, fname),
@@ -96,5 +98,25 @@ def send_cate(chat_id, fname):
                     raise BaseException("Giving up on sending cate: %s" % r)
         except Exception as e:
             print("Failed to send cate with exception: %s" % e)
+            if len(imgs) - i <= 1:
+                raise
+
+
+def send_doggo(chat_id, fname):
+    imgs, text = destruct(doggos.get_doggos(), 'images', 'text')
+    text = text or "Here's your awesome dog pic, %s!" % fname
+    for i in range(0, len(imgs)):
+        try:
+            url = imgs[i]['url']
+            r = bot.send_photo(chat_id, url, text)
+            if r.status_code == 200:
+                print("Successfully sent a doggo! (%s)" % r)
+                return r
+            else:
+                print("Failed to send doggo with reason: %s" % r.reason)
+                if len(imgs) - i <= 1:
+                    raise BaseException("Giving up on sending doggo: %s" % r)
+        except Exception as e:
+            print("Failed to send doggo with exception: %s" % e)
             if len(imgs) - i <= 1:
                 raise
