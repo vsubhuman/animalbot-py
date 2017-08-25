@@ -1,6 +1,6 @@
+import datetime
 import os
 import random
-import datetime
 
 import cates
 import telegram
@@ -21,20 +21,30 @@ def handle_message(msg):
     print("Processing message from %s" % msg['date'].strftime('%Y-%m-%d %H:%M:%S'))
     chat, user, text = destruct(msg, 'chat', 'from', 'text')
     chat_id, chat_type = destruct(chat, 'id', 'type')
+    uname, fname = destruct(user, 'username', 'first_name')
     if environment == 'test':
         if chat_type != 'private':
             bot.leave_chat(chat_id)
             return
-        elif user['username'] != 'vsubhuman':
+        elif uname != 'vsubhuman':
             return
-    send_version = lambda: bot.send_message(chat_id, "Version: %s" % version)
-    send_echo = lambda: bot.send_message(chat_id, "Echo> %s" % text)
     case(lower(text), {
-        '/cate': lambda: send_cate(chat_id, user['first_name']),
-        '/version': send_version,
-        DEFAULT: send_echo,
+        '/cate': lambda: send_cate(chat_id, fname),
+        '/start': lambda: send_hello(chat_id, fname),
+        '/version': lambda: bot.send_message(chat_id, "Version: %s" % version),
+        DEFAULT: lambda: send_help(chat_id, fname),
         None: lambda: None
     })
+
+
+def send_help(chat_id, fname):
+    text = "Sorry, %s, the proper command is: `/cate`" % fname
+    return bot.send_message(chat_id, text)
+
+
+def send_hello(chat_id, fname):
+    text = "Hello, %s! Current command is `/cate` =)" % fname
+    return bot.send_message(chat_id, text)
 
 
 def send_cate(chat_id, fname):

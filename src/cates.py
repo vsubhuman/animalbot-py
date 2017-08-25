@@ -8,11 +8,6 @@ def get_cates(type, num=3):
     r = requests.get(url)
     if r.status_code == 200:
         root = ET.fromstring(r.text)
-        return list(map(_el2dict, root.find('./data/images')))
+        el2dict = lambda el: dict((c.tag, c.text) for c in el.getchildren())
+        return list(map(el2dict, root.find('./data/images')))
 
-
-def _el2dict(el):
-    res = {}
-    for c in el.getchildren():
-        res[c.tag] = c.text
-    return res
