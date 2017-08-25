@@ -6,7 +6,7 @@ import cates
 import telegram
 from vutil import *
 
-version = '1.0'
+version = '1.1-SNAPSHOT'
 bot = telegram.bot(os.environ['bot_token'])
 environment = os.environ.get('environment', 'test')
 
