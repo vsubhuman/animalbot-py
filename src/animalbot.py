@@ -7,6 +7,7 @@ import telegram
 from vutil import *
 
 version = '1.1-SNAPSHOT'
+bot_username = os.environ['bot_username'].lower()
 bot = telegram.bot(os.environ['bot_token'])
 environment = os.environ.get('environment', 'test')
 
@@ -20,6 +21,7 @@ def handle_message(msg):
     msg['date'] = datetime.datetime.fromtimestamp(msg['date'])
     print("Processing message from %s" % msg['date'].strftime('%Y-%m-%d %H:%M:%S'))
     chat, user, text = destruct(msg, 'chat', 'from', 'text')
+    text, is_personal = destruct(fix_text(text), 'text', 'personal')
     chat_id, chat_type = destruct(chat, 'id', 'type')
     uname, fname = destruct(user, 'username', 'first_name')
     if environment == 'test':
@@ -35,6 +37,13 @@ def handle_message(msg):
         DEFAULT: lambda: send_help(chat_id, fname),
         None: lambda: None
     })
+
+
+def fix_text(text):
+    if lower(text).endswith("@%s" % bot_username):
+        return {'text': text[0:len(text) - len(bot_username) - 1], 'personal': True}
+    else:
+        return {'text': text, 'personal': True}
 
 
 def send_help(chat_id, fname):
