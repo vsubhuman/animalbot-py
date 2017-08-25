@@ -11,11 +11,9 @@ bot_username = os.environ['bot_username'].lower()
 bot = telegram.bot(os.environ['bot_token'])
 environment = os.environ.get('environment', 'test')
 
-
 def handler(evt, ctx):
     print("Event: %s" % evt)
     with_(evt.get('message'), handle_message)
-
 
 def handle_message(msg):
     msg['date'] = datetime.datetime.fromtimestamp(msg['date'])
@@ -31,6 +29,7 @@ def handle_message(msg):
         elif uname != 'vsubhuman':
             return
     case(lower(text), {
+        '/animal': lambda: send_animal_help(chat_id),
         '/cate': lambda: send_cate(chat_id, fname),
         '/start': lambda: send_hello(chat_id, fname),
         '/version': lambda: bot.send_message(chat_id, "Version: %s" % version),
@@ -48,6 +47,11 @@ def fix_text(text):
 
 def send_help(chat_id, fname):
     text = "Sorry, %s, the proper command is: `/cate`" % fname
+    return bot.send_message(chat_id, text)
+
+
+def send_animal_help(chat_id):
+    text = "The only supported animal for now is `/cate` =)"
     return bot.send_message(chat_id, text)
 
 
