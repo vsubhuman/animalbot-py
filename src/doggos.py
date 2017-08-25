@@ -12,6 +12,7 @@ def get_doggos(num=3):
         'text': head(r2.json().get('facts'))
     }
 
+
 def get_async(*urls):
     session = sessions.FuturesSession()
     futures = map(session.get, urls)

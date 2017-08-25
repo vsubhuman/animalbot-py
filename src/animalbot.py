@@ -62,6 +62,7 @@ def send_why(chat_id, text):
         DEFAULT: idk
     })
 
+
 def send_help(chat_id, fname):
     text = "Sorry, %s, the proper command is: `/cate`" % fname
     return bot.send_message(chat_id, text)
