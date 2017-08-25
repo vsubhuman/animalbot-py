@@ -55,11 +55,18 @@ def send_cate(chat_id, fname):
             url = imgs[i]['url']
             type_str = 'pic' if type == 'jpg' else 'gif'
             text = "Here's your awesome cat %s, %s!" % (type_str, fname)
-            return case(type, {
+            r = case(type, {
                 'jpg': lambda: bot.send_photo(chat_id, url, text),
                 'gif': lambda: bot.send_video(chat_id, url, text)
             })
+            if r.status_code == 200:
+                print("Successfully sent a cate! (%s)" % r)
+                return r
+            else:
+                print("Failed to send cate with reason: %s" % r.reason)
+                if len(imgs) - i <= 1:
+                    raise BaseException("Giving up on sending cate: %s" % r)
         except Exception as e:
-            print("Failed to send cate! %s" % e)
+            print("Failed to send cate with exception: %s" % e)
             if len(imgs) - i <= 1:
-                raise e
+                raise
