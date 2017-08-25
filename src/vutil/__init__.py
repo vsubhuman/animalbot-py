@@ -21,3 +21,10 @@ def with_(val, f):
 def destruct(dict, *keys):
     return (dict.get(key) for key in keys)
 
+
+def split(str):
+    return str.split() if str else []
+
+
+def join(seq, sep=' '):
+    return sep.join(str(x) for x in seq) if seq else ''

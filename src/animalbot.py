@@ -11,9 +11,11 @@ bot_username = os.environ['bot_username'].lower()
 bot = telegram.bot(os.environ['bot_token'])
 environment = os.environ.get('environment', 'test')
 
+
 def handler(evt, ctx):
     print("Event: %s" % evt)
     with_(evt.get('message'), handle_message)
+
 
 def handle_message(msg):
     msg['date'] = datetime.datetime.fromtimestamp(msg['date'])
@@ -28,7 +30,10 @@ def handle_message(msg):
             return
         elif uname != 'vsubhuman':
             return
-    case(lower(text), {
+    words = split(lower(text))
+    cmd = next(iter(words), None)
+    case(cmd, {
+        '/why': lambda: send_why(chat_id, join(words[1:])),
         '/animal': lambda: send_animal_help(chat_id),
         '/cate': lambda: send_cate(chat_id, fname),
         '/start': lambda: send_hello(chat_id, fname),
@@ -44,6 +49,16 @@ def fix_text(text):
     else:
         return {'text': text, 'personal': True}
 
+
+def send_why(chat_id, text):
+    why_what = lambda: bot.send_message(chat_id, "Why what?")
+    idk = lambda: bot.send_message(chat_id, "idk")
+    case(text, {
+        'cate': lambda: bot.send_photo(chat_id, 'http://i.imgur.com/WNPI3gQ.png', "That's why"),
+        '': why_what,
+        None: why_what,
+        DEFAULT: idk
+    })
 
 def send_help(chat_id, fname):
     text = "Sorry, %s, the proper command is: `/cate`" % fname
