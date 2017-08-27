@@ -38,9 +38,10 @@ def handle_message(msg):
         '/animal': lambda: random.choice([send_cate, send_doggo])(chat_id, fname),
         '/cate': lambda: send_cate(chat_id, fname),
         '/doggo': lambda: send_doggo(chat_id, fname),
-        '/start': lambda: send_hello(chat_id, fname),
+        '/start': lambda: send_help(chat_id, fname),
+        '/help': lambda: send_help(chat_id, fname),
         '/version': lambda: bot.send_message(chat_id, "Version: %s" % version),
-        DEFAULT: lambda: send_help(chat_id, fname),
+        DEFAULT: lambda: send_sorry(chat_id, fname, cmd),
         None: lambda: None
     })
 
@@ -81,13 +82,17 @@ why_animals_pics = {
 }
 
 
-def send_help(chat_id, fname):
-    text = "Sorry, %s, the proper command is: `/cate`" % fname
+def send_sorry(chat_id, fname, text):
+    text = """Sorry, %s, `%s` is not a proper command =(
+Use /help to get a list of proper commands""" % (fname, text)
     return bot.send_message(chat_id, text)
 
 
-def send_hello(chat_id, fname):
-    text = "Hello, %s! Current command is `/cate` =)" % fname
+def send_help(chat_id, fname):
+    text = """Hello, %s! Current available commands are:
+1. `/cate` - to get a cat pic or a gif
+2. `/doggo` - to get a dog pic and a fact
+3. `/animal` - to get a random of those two =)""" % fname
     return bot.send_message(chat_id, text)
 
 
