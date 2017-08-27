@@ -17,6 +17,7 @@ ZIP = 'build/animalbot-py.zip'
 S3_BUCKET = 'com.vsubhuman.lambda'
 S3_KEY = "%s_py.zip"
 
+
 def zip_dir(zipfile, dir):
     for root, dirs, files in os.walk(dir):
         for file in files:
@@ -27,6 +28,9 @@ def zip_dir(zipfile, dir):
 
 def create_zip():
     print(":zip")
+    dir, _ = os.path.split(ZIP)
+    if dir and not os.path.exists(dir):
+        os.makedirs(dir)
     with zipfile.ZipFile(ZIP, mode='w') as z:
         zip_dir(z, 'src')
         zip_dir(z, 'virtualenv/lib/python3.6/site-packages')
@@ -46,6 +50,7 @@ def deploy_zip(lambda_name, s3_key):
         S3Bucket=S3_BUCKET,
         S3Key=s3_key
     )
+
 
 if len(sys.argv) != 2:
     print("One argument <target> is expected!")
