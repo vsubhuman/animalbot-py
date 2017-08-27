@@ -7,10 +7,12 @@ import doggos
 import telegram
 from vutil import *
 
-version = '1.2'
+version = '1.2.1-SNAPSHOT'
 bot_username = os.environ['bot_username'].lower()
 bot = telegram.bot(os.environ['bot_token'])
 environment = os.environ.get('environment', 'test')
+developers = set(split(os.environ.get('developers')))
+basset_lovers = set(split(os.environ.get('basset_lovers')))
 
 
 def handler(evt, ctx):
@@ -29,15 +31,17 @@ def handle_message(msg):
         if chat_type != 'private':
             bot.leave_chat(chat_id)
             return
-        elif uname != 'vsubhuman':
+        elif uname not in developers:
+            print("Ignoring non-developer: %s" % uname)
             return
     words = split(lower(text))
     cmd = next(iter(words), None)
     case(cmd, {
+        '/am_i_basset_lover': lambda: bot.send_message(chat_id, "Yes" if uname in basset_lovers else "No"),
         '/why': lambda: send_why(chat_id, join(words[1:])),
-        '/animal': lambda: random.choice([send_cate, send_doggo])(chat_id, fname),
-        '/cate': lambda: send_cate(chat_id, fname),
-        '/doggo': lambda: send_doggo(chat_id, fname),
+        '/animal': lambda: random.choice([send_cate, send_doggo])(chat_id, fname, uname),
+        '/cate': lambda: send_cate(chat_id, fname, uname),
+        '/doggo': lambda: send_doggo(chat_id, fname, uname),
         '/start': lambda: send_help(chat_id, fname),
         '/help': lambda: send_help(chat_id, fname),
         '/version': lambda: bot.send_message(chat_id, "Version: %s" % version),
@@ -96,7 +100,7 @@ def send_help(chat_id, fname):
     return bot.send_message(chat_id, text)
 
 
-def send_cate(chat_id, fname):
+def send_cate(chat_id, fname, _):
     type = random.choice(['jpg', 'gif'])
     imgs = cates.get_cates(type)
     for i in range(0, len(imgs)):
@@ -121,8 +125,9 @@ def send_cate(chat_id, fname):
                 raise
 
 
-def send_doggo(chat_id, fname):
-    imgs, text = destruct(doggos.get_doggos(), 'images', 'text')
+def send_doggo(chat_id, fname, uname):
+    basset_lover = uname in basset_lovers
+    imgs, text = destruct(doggos.get_doggos(is_basset_lover=basset_lover), 'images', 'text')
     text = text or "Here's your awesome dog pic, %s!" % fname
     for i in range(0, len(imgs)):
         try:
