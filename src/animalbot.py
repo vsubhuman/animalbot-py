@@ -35,7 +35,7 @@ def handle_message(msg):
     cmd = next(iter(words), None)
     case(cmd, {
         '/why': lambda: send_why(chat_id, join(words[1:])),
-        '/animal': lambda: send_animal_help(chat_id),
+        '/animal': lambda: random.choice([send_cate, send_doggo])(chat_id, fname),
         '/cate': lambda: send_cate(chat_id, fname),
         '/doggo': lambda: send_doggo(chat_id, fname),
         '/start': lambda: send_hello(chat_id, fname),
@@ -57,19 +57,32 @@ def send_why(chat_id, text):
     idk = lambda: bot.send_message(chat_id, "idk")
     case(text, {
         'cate': lambda: bot.send_photo(chat_id, 'http://i.imgur.com/WNPI3gQ.png', "That's why"),
+        'doggo': lambda: bot.send_photo(chat_id, 'http://i.imgur.com/yjjZySb.png', "That's why"),
+        'animal': lambda: bot.send_photo(chat_id, *random.choice(list(why_animals_pics.items()))),
+        'why': lambda: bot.send_photo(chat_id, 'http://i.imgur.com/m8MlEqw.jpg'),
         '': why_what,
         None: why_what,
         DEFAULT: idk
     })
 
 
+why_animals_pics = {
+    'http://i.imgur.com/6ocNG8d.png': 'idk... cuz?',
+    'http://i.imgur.com/KdMXtIC.png': "That's a hell of a question...",
+    'http://i.imgur.com/zddme9N.png': 'Dude... the fuck?',
+    'http://i.imgur.com/wd9Pfwg.jpg': 'Why animal?...',
+    'http://i.imgur.com/9iy4t4o.jpg': 'Why would you even ask?!',
+    'http://i.imgur.com/2oHiAIS.png': 'You right... why?',
+    'http://i.imgur.com/sqqryBf.png': 'Government, probably',
+    'http://i.imgur.com/6EDzjwS.png': '...',
+    'http://i.imgur.com/TSFTxb8.png': 'hmmmmmmmmmmmmmmmmmmmmmmmmmm.......',
+    'http://i.imgur.com/eHsHDFn.png': 'Why the hell not, man?!',
+    'http://i.imgur.com/p2D37ku.png': 'Fuck do you mean, why animal?!'
+}
+
+
 def send_help(chat_id, fname):
     text = "Sorry, %s, the proper command is: `/cate`" % fname
-    return bot.send_message(chat_id, text)
-
-
-def send_animal_help(chat_id):
-    text = "The only supported animal for now is `/cate` =)"
     return bot.send_message(chat_id, text)
 
 
